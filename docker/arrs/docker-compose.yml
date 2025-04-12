@@ -1,0 +1,158 @@
+version: '3'
+services:
+  gluetun:
+    image: qmcgaw/gluetun
+    container_name: gluetun
+    cap_add:
+      - NET_ADMIN
+    devices:
+      - /dev/net/tun:/dev/net/tun
+    ports:
+      - 8123:8000/tcp # control server
+      - 8888:8888/tcp # HTTP proxy
+      - 8388:8388/tcp # Shadowsocks
+      - 8388:8388/udp # Shadowsocks
+      - 6881:6881/udp # qBittorrent
+      - 8050:8050 # qBittorrent
+      - 6881:6881 # qBittorrent
+      - 9696:9696 # prowlarr
+      - 7575:7575 # homarr
+      - 8989:8989 # sonarr
+      - 7878:7878 # radarr
+      - 8191:8191 # flaresolverr
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/gluetun:/gluetun
+    environment:
+      # See https://github.com/qdm12/gluetun-wiki/tree/main/setup#setup
+      VPN_SERVICE_PROVIDER: ${GLUETUN_VPN_SERVICE_PROVIDER}
+      VPN_TYPE: ${GLUETUN_VPN_TYPE}
+      # OpenVPN:
+      OPENVPN_USER: ${GLUETUN_OPENVPN_USER}
+      OPENVPN_PASSWORD: ${GLUETUN_OPENVPN_PASSWORD}
+      TZ: ${TZ}
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+      
+  qbittorrent:
+    image: lscr.io/linuxserver/qbittorrent:latest
+    container_name: qbittorrent
+    network_mode: "service:gluetun"
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+      WEBUI_PORT: ${QBITTORRENT_WEBUI_PORT}
+      TORRENTING_PORT: ${QBITTORRENT_TORRENTING_PORT}
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/qbittorrent:/config
+      - ${ARRS_DATA_LOCATION}/download:/downloads
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+  
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    network_mode: "service:gluetun"
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/prowlarr:/config
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    container_name: sonarr
+    network_mode: "service:gluetun"
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/sonarr:/config
+      - ${ARRS_DATA_LOCATION}:/data
+      - ${ARRS_DATA_LOCATION}/download:/downloads
+      - ${ARRS_DATA_LOCATION}/media/tv:/tv
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  radarr:
+    image: lscr.io/linuxserver/radarr:latest
+    container_name: radarr
+    network_mode: "service:gluetun"
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/radarr:/config
+      - ${ARRS_DATA_LOCATION}:/data
+      - ${ARRS_DATA_LOCATION}/download:/downloads
+      - ${ARRS_DATA_LOCATION}/media/movies:/movies
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  jellyfin:
+    image: lscr.io/linuxserver/jellyfin:latest
+    container_name: jellyfin
+    devices:
+      - /dev/dri:/dev/dri  # Pass Intel Quick Sync device for hardware transcoding
+    environment:
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/jellyfin:/config
+      - ${ARRS_DATA_LOCATION}/media/tv:/data/tvshows
+      - ${ARRS_DATA_LOCATION}/media/movies:/data/movies
+    ports:
+      - 8096:8096
+      - 8920:8920 #optional
+      - 7359:7359/udp #optional
+      - 1900:1900/udp #optional
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  jellyseerr:
+    image: fallenbagel/jellyseerr:latest
+    container_name: jellyseerr
+    environment:
+      LOG_LEVEL: ${JELLYSERR_LOG_LEVEL} 
+      TZ: ${TZ}
+      PUID: ${PUID}
+      PGID: ${PGID}
+    ports:
+      - 5055:5055
+    volumes:
+      - ${ARRS_CONFIGS_LOCATION}/jellyserr:/app/config
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  flaresolverr:
+    image: ghcr.io/flaresolverr/flaresolverr:latest
+    container_name: flaresolverr
+    network_mode: "service:gluetun"
+    environment:
+      LOG_LEVEL: ${FLARESOLVERR_LOG_LEVEL}
+      LOG_HTML: ${FLARESOLVERRLOG_HTML}
+      CAPTCHA_SOLVER: ${FLARESOLVERRCAPTCHA_SOLVER}
+      TZ: ${TZ}
+    restart: unless-stopped
+    labels:
+      - "com.centurylinklabs.watchtower.enable=true"
+
+  watchtower:
+    image: containrrr/watchtower
+    volumes:
+      - /var/run/docker.sock:/var/run/docker.sock
+    environment:
+      WATCHTOWER_CLEANUP: ${WATCHTOWER_CLEANUP}
+      WATCHTOWER_LABEL_ENABLE: ${WATCHTOWER_LABEL_ENABLE}
