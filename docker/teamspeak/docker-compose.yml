@@ -1,0 +1,29 @@
+services:
+  teamspeak:
+    image: teamspeak:latest
+    restart: always
+    ports:
+      - 9987:9987/udp
+      - 10011:10011
+      - 30033:30033
+      - 41144:41144
+    environment:
+      TS3SERVER_DB_PLUGIN=${TS3SERVER_DB_PLUGIN}
+      TS3SERVER_DB_SQLCREATEPATH=${TS3SERVER_DB_SQLCREATEPATH}
+      TS3SERVER_DB_HOST=${TS3SERVER_DB_HOST}
+      TS3SERVER_DB_USER=${TS3SERVER_DB_USER}
+      TS3SERVER_DB_PASSWORD=${TS3SERVER_DB_PASSWORD}
+      TS3SERVER_DB_NAME=${TS3SERVER_DB_NAME}
+      TS3SERVER_DB_WAITUNTILREADY=${TS3SERVER_DB_WAITUNTILREADY}
+      TS3SERVER_LICENSE=${TS3SERVER_LICENSE}
+    volumes:
+      - ts3-volume:/var/ts3server/
+    
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD=${MYSQL_ROOT_PASSWORD}
+      MYSQL_DATABASE=${MYSQL_DATABASE}
+volumes:
+  ts3-volume:
