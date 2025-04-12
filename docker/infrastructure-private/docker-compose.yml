@@ -1,0 +1,29 @@
+version: "3"
+services:
+  adguardhome:
+    image: adguard/adguardhome
+    container_name: adguardhome
+    ports:
+      - 192.168.50.22:53:53/tcp
+      - 192.168.50.22:53:53/udp
+      - 784:784/udp
+      - 853:853/tcp
+      - 3000:3000/tcp
+      - 8080:80/tcp
+      - 8443:443/tcp
+    volumes:
+      - ${ADGUARDHOME_LOCATION}/workdir:/opt/adguardhome/work
+      - ${ADGUARDHOME_LOCATION}/confdir:/opt/adguardhome/conf
+    restart: unless-stopped
+    
+  nginx-proxy-manager:
+    image: 'jc21/nginx-proxy-manager:latest'
+    container_name: private-nginx-proxy-manager
+    restart: unless-stopped
+    ports:
+      - '80:80' # Public HTTP Port
+      - '443:443' # Public HTTPS Port
+      - '81:81' # Admin Web Port
+    volumes:
+      - ${NGINX_PROXY_MANAGER}/data:/data
+      - ${NGINX_PROXY_MANAGER}/letsencrypt:/etc/letsencrypt
