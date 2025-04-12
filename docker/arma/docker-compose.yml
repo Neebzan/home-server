@@ -1,0 +1,33 @@
+services:
+  arma3:
+    image: ghcr.io/brettmayson/arma3server/arma3server:latest
+    container_name: arma3
+    platform: linux/amd64
+    ports:
+      - "2344:2344"
+      - "2345:2345"
+      - "2302:2302/udp"
+      - "2303:2303/udp"
+      - "2304:2304/udp"
+      - "2305:2305/udp"
+      - "2306:2306/udp"
+    volumes:
+      - ${ARMA3_LOCATION}:/arma3
+      - ${ARMA3_LOCATION}/missions:/arma3/mpmissions
+      - ${ARMA3_LOCATION}/configs:/arma3/configs
+      - ${ARMA3_LOCATION}/mods:/arma3/mods
+      - ${ARMA3_LOCATION}/servermods:/arma3/servermods
+    restart: unless-stopped
+    environment:
+      ARMA_BINARY: ${ARMA_BINARY}
+      ARMA_CONFIG: ${ARMA_CONFIG}
+      ARMA_LIMITFPS: ${ARMA_LIMITFPS}
+      ARMA_PROFILE: ${ARMA_PROFILE}
+      ARMA_WORLD: ${ARMA_WORLD}
+      HEADLESS_CLIENTS: ${HEADLESS_CLIENTS}
+      HEADLESS_CLIENTS_PROFILE: ${HEADLESS_CLIENTS_PROFILE}
+      MODS_LOCAL: ${MODS_LOCAL}
+      PORT: ${PORT}
+      STEAM_BRANCH: ${STEAM_BRANCH}
+      STEAM_USER: ${STEAM_USER}
+      STEAM_PASSWORD: ${STEAM_PASSWORD}
