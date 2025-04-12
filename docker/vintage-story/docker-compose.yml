@@ -6,7 +6,7 @@ services:
       - "42420:42420/udp"
     volumes:
       - ${GAME_FILES_LOCATION}:/app/data
-      - vintage-story-game-files:/app/server  # Docker-managed named volume
+      - vintage-story-files:/app/server  # Docker-managed named volume
     environment:
       VERSION: ${VERSION} 
     user: "1000:1000"  # This ensures the container uses the correct UID/GID
