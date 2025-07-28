@@ -8,7 +8,8 @@ services:
       - ${GAME_FILES_LOCATION}:/app/data
       - vintage-story-files:/app/server  # Docker-managed named volume
     environment:
-      VERSION: ${VERSION} 
+      VERSION: ${VERSION}
+      CHANNEL: ${CHANNEL}
     user: "1000:1000"  # This ensures the container uses the correct UID/GID
       
 volumes:
