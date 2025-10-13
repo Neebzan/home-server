@@ -1,21 +1,20 @@
-version: "3"
 services:
-  adguardhome:
-    image: adguard/adguardhome
-    container_name: adguardhome
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
     ports:
-      - 192.168.50.22:53:53/tcp
-      - 192.168.50.22:53:53/udp
-      - 784:784/udp
-      - 853:853/tcp
-      - 3000:3000/tcp
-      - 8080:80/tcp
-      - 8443:443/tcp
+      - ${LOCAL_SERVER_IP}:53:53/tcp
+      - ${LOCAL_SERVER_IP}:53:53/udp
+      - 8081:80/tcp
+    environment:
+      TZ: 'Europe/Copenhagen'
+      FTLCONF_webserver_api_password: ${PIHOLE_WEBUI_PASSWORD}
     volumes:
-      - ${ADGUARDHOME_LOCATION}/workdir:/opt/adguardhome/work
-      - ${ADGUARDHOME_LOCATION}/confdir:/opt/adguardhome/conf
+      - ${PIHOLE_CONFIGURATION_LOCATION}:/etc/pihole
     restart: unless-stopped
-    
+    cap_add:
+      - NET_ADMIN
+
   nginx-proxy-manager:
     image: 'jc21/nginx-proxy-manager:latest'
     container_name: private-nginx-proxy-manager
@@ -25,5 +24,5 @@ services:
       - '443:443' # Public HTTPS Port
       - '81:81' # Admin Web Port
     volumes:
-      - ${NGINX_PROXY_MANAGER}/data:/data
-      - ${NGINX_PROXY_MANAGER}/letsencrypt:/etc/letsencrypt
+      - ${NGINX_PROXY_MANAGER_CONFIGURATION_LOCATION}/data:/data
+      - ${NGINX_PROXY_MANAGER_CONFIGURATION_LOCATION}/letsencrypt:/etc/letsencrypt
