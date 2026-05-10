@@ -5,12 +5,9 @@ services:
       - "42420:42420/tcp"
       - "42420:42420/udp"
     volumes:
-      - ${GAME_FILES_LOCATION}:/app/data
-      - vintage-story-files:/app/server  # Docker-managed named volume
+      - ${GAME_FILES_LOCATION}:/app/server_files
+      - ${GAME_FILES_LOCATION}:/app/game_files
     environment:
       VERSION: ${VERSION}
       CHANNEL: ${CHANNEL}
     user: 1000:1000
-      
-volumes:
-  vintage-story-files: # Must be assigned RW privileges of user used in vintage_story container
