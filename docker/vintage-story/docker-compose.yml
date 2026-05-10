@@ -1,6 +1,6 @@
 services:
   vintage_story:
-    image: neebz/vintage-story-server:2026.05.10-1-rc-4
+    image: neebz/vintage-story-server:2026.05.10-1-rc-5
     ports:
       - "42420:42420/tcp"
       - "42420:42420/udp"
@@ -10,9 +10,7 @@ services:
     environment:
       VERSION: ${VERSION}
       CHANNEL: ${CHANNEL}
-      PUID: ${PUID}
-      PGID: ${PGID}
-    user: "0:0"  # Run as root
+    user: "1000:1000"
       
 volumes:
   vintage-story-files:
