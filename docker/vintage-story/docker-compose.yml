@@ -12,7 +12,7 @@ services:
       CHANNEL: ${CHANNEL}
       PUID: ${PUID}
       PGID: ${PGID}
-    user: "1000:1000"  # This ensures the container uses the correct UID/GID
+    user: "0:0"  # Run as root
       
 volumes:
   vintage-story-files:
