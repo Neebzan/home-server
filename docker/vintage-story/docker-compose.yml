@@ -10,7 +10,6 @@ services:
     environment:
       VERSION: ${VERSION}
       CHANNEL: ${CHANNEL}
-    user: "1000:1000"
       
 volumes:
   vintage-story-files:
