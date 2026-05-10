@@ -1,6 +1,6 @@
 services:
   vintage_story:
-    image: neebz/vintage-story-server:2026.05.10-1-rc-10
+    image: neebz/vintage-story-server:2026.05.10-1-rc-11
     ports:
       - "42420:42420/tcp"
       - "42420:42420/udp"
@@ -13,4 +13,4 @@ services:
     user: 1000:1000
       
 volumes:
-  vintage-story-files:
+  vintage-story-files: # Must be assigned RW privileges of user used in vintage_story container
