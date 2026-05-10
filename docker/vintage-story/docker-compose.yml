@@ -1,12 +1,12 @@
 services:
   vintage_story:
-    image: neebz/vintage-story-server:2026.05.10-1-rc-1
+    image: neebz/vintage-story-server:2026.05.10-1-rc-2
     ports:
       - "42420:42420/tcp"
       - "42420:42420/udp"
     volumes:
       - ${GAME_FILES_LOCATION}:/app/data
-      - vintage-story-files:/app/server  # Docker-managed named volume
+      - vintage-story-cache:/app/cache
     environment:
       VERSION: ${VERSION}
       CHANNEL: ${CHANNEL}
