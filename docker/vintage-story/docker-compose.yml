@@ -5,8 +5,8 @@ services:
       - "42420:42420/tcp"
       - "42420:42420/udp"
     volumes:
-      - ${GAME_FILES_LOCATION}:/app/server_files
-      - ${GAME_FILES_LOCATION}:/app/game_files
+      - ${GAME_FILES_LOCATION}/server_files:/app/server_files
+      - ${GAME_FILES_LOCATION}/game_files:/app/game_files
     environment:
       VERSION: ${VERSION}
       CHANNEL: ${CHANNEL}
