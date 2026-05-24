@@ -16,7 +16,6 @@ services:
       - 8050:8050 # qBittorrent
       - 6881:6881 # qBittorrent
       - 9696:9696 # prowlarr
-      - 7575:7575 # homarr
       - 8989:8989 # sonarr
       - 7878:7878 # radarr
       - 8191:8191 # flaresolverr
